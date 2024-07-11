@@ -19,7 +19,7 @@ namespace MathQuiz
                 4 => GenerateDivisionQuestion(difficulty),
                 5 => GenerateSquareRootQuestion(difficulty),
                 6 => GenerateExponentiationQuestion(difficulty),
-                _ => throw new InvalidOperationException("Invalid operation type") // exception
+                _ => throw new InvalidOperationException("Invalid operation type")
             };
             return question;
         }
@@ -68,9 +68,11 @@ namespace MathQuiz
         public static bool VerifyAnswer(string question, string userAnswer)
         {
             string[] parts = question.Split(new char[] { ' ', '=' }, StringSplitOptions.RemoveEmptyEntries);
-            if (int.TryParse(parts[0], out int num1) && 
-                (parts.Length <= 2 || int.TryParse(parts[2], out int num2)) &&
-                double.TryParse(userAnswer, out double userAnswerParsed))
+            int num1 = 0, num2 = 0;
+            bool isNum1Parsed = int.TryParse(parts[0], out num1);
+            bool isNum2Parsed = parts.Length > 2 && int.TryParse(parts[2], out num2);
+
+            if (isNum1Parsed && (parts.Length <= 2 || isNum2Parsed) && double.TryParse(userAnswer, out double userAnswerParsed))
             {
                 char operation = parts[1][0];
                 double correctAnswer = operation switch
@@ -81,7 +83,7 @@ namespace MathQuiz
                     '/' => num1 / (double)num2,
                     '√' => Math.Sqrt(num1),
                     '^' => Math.Pow(num1, num2),
-                    _ => throw new InvalidOperationException("Invalid operation") // exception
+                    _ => throw new InvalidOperationException("Invalid operation")
                 };
 
                 return Math.Abs(correctAnswer - userAnswerParsed) < 0.001;
